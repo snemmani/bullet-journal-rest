@@ -48,6 +48,55 @@ class TaskStateSerializer(serializers.Serializer):
         model = models.TaskState
         fields = '__all__'
 
+class EventSerializer(serializers.Serializer):
+    """An Event in Bullet Journal"""
+    id = serializers.IntegerField(read_only=True)
+    description = serializers.CharField(max_length=250)
+    date = serializers.DateTimeField(required=False)
+    collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), required=False)
+    recurrence = serializers.DurationField(required=False)
+    created = serializers.DateTimeField(read_only=True)
+    updated = serializers.DateTimeField(read_only=True)
+
+    def update(self, instance, validated_data):
+        instance.description = validated_data.get('description', instance.description)
+        instance.date = validated_data.get('date', instance.date)
+        instance.collection = validated_data.get('collection', instance.collection)
+        instance.recurrence = validated_data.get('recurrence', instance.recurrence)
+        instance.save()
+        return instance
+
+    def create(self, validated_data):
+        return models.Event.objects.create(**validated_data)
+
+    class Meta:
+        model = models.Event
+        fields = '__all__'
+
+
+class NoteSerializer(serializers.Serializer):
+    """A Note in Bullet Journal"""
+    id = serializers.IntegerField(read_only=True)
+    description = serializers.CharField(max_length=250)
+    date = serializers.DateTimeField(required=False)
+    collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), required=False)
+    created = serializers.DateTimeField(read_only=True)
+    updated = serializers.DateTimeField(read_only=True)
+
+    def update(self, instance, validated_data):
+        instance.description = validated_data.get('description', instance.description)
+        instance.date = validated_data.get('date', instance.date)
+        instance.collection = validated_data.get('collection', instance.collection)
+        instance.save()
+        return instance
+
+    def create(self, validated_data):
+        return models.Note.objects.create(**validated_data)
+
+    class Meta:
+        model = models.Note
+        fields = '__all__'
+
 
 class JournalCollectionSerializer(serializers.Serializer):
     """A journal page is a collection in the bullet journal"""
@@ -55,6 +104,8 @@ class JournalCollectionSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=10)
     calendar_day = serializers.DateField()  # If this is null, the page might be a collection
     tasks = TaskSerializer(many=True)
+    events = EventSerializer(many=True)
+    notes = NoteSerializer(many=True)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
