@@ -1,0 +1,1 @@
+web: gunicorn bullet_journal.wsgi
