@@ -13,8 +13,8 @@ class TaskStateTest(TestCase):
 
     def test_object_creation(self):
         assert len(TaskState.objects.all()) == 1
-        state = TaskState.objects.get(pk=1).name
-        assert  state.name == "Active"
+        state = TaskState.objects.get(pk=1)
+        assert state.name == "Active"
         assert str(state) == "Active"
 
 
