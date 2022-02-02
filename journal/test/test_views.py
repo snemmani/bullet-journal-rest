@@ -78,16 +78,92 @@ class TestTaskListView(TestCase):
         response = client.get(reverse('task_list'))
         data = Task.objects.all()
         serializer = TaskSerializer(data, many=True)
-        print(response.data)
         assert serializer.data == response.data
         assert response.status_code == status.HTTP_200_OK
     
     def test_post(self):
         payload = payloads.get("task").get("test_post").get("basic")
-        print(JournalCollection.objects.all())
         response = client.post(reverse('task_list'), data=payload, content_type="application/json")
         data = Task.objects.get(pk=2)
         serializer = TaskSerializer(data)
         assert serializer.data == response.data
         assert response.status_code == status.HTTP_201_CREATED
-    
+
+class TestTaskDetailView(TestCase):
+    """Tests module to test TaskDetailView"""
+
+    def setUp(self):
+        taskState = TaskState.objects.create(name="Active")
+        collection = JournalCollection.objects.create(name="Collection 1")
+        duration = datetime.timedelta(days=1, hours=2)
+        Task.objects.create(description="Watch Big Bang Theory", task_state=taskState, due_date=timezone.now(), collection=collection, recurrence=duration)
+
+    def test_get_put_delete(self):
+        # Test get
+        response = client.get(reverse('task_detail', args=[1]))
+        data = Task.objects.get(pk=1)
+        serializer = TaskSerializer(data)
+        assert serializer.data == response.data
+        assert response.status_code == status.HTTP_200_OK
+
+        # Test put future log set to true
+        description = "Don't watch GOT"
+        future_log = True
+        response = client.put(
+            reverse('task_detail', args=[1]), 
+            data=dict(
+                description=description, 
+                future_log=future_log,
+                task_state=1,
+                collection=1,),
+            content_type='application/json'
+        )
+
+        assert not response.data.get('recurrence')
+        assert not response.data.get('number_of_recurrences')
+        
+        assert response.data.get('future_log')
+        assert response.status_code == status.HTTP_200_OK
+
+        # Existing future log true
+        description = "Don't watch GOT"
+        future_log = True
+        response = client.put(
+            reverse('task_detail', args=[1]), 
+            data=dict(
+                description=description, 
+                recurrence="01:00:00",
+                task_state=1,
+                collection=1,
+                number_of_recurrences=1),
+            content_type='application/json'
+        )
+
+        assert not response.data.get('recurrence')
+        assert not response.data.get('number_of_recurrences')
+        assert response.data.get('future_log')
+        assert response.status_code == status.HTTP_200_OK
+
+        # Set future log to False and set recurrence
+        description = "Don't watch GOT"
+        future_log = True
+        response = client.put(
+            reverse('task_detail', args=[1]), 
+            data=dict(
+                description=description, 
+                recurrence="01:00:00",
+                number_of_recurrences=1,
+                future_log=False,
+                task_state=1,
+                collection=1,),
+            content_type='application/json'
+        )
+
+        assert response.data.get('recurrence') == "01:00:00"
+        assert response.data.get('number_of_recurrences') == 1
+        assert not response.data.get('future_log')
+        assert response.status_code == status.HTTP_200_OK
+
+
+
+            

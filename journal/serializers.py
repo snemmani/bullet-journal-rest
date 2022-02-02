@@ -9,7 +9,8 @@ class TaskSerializer(serializers.Serializer):
     task_state = serializers.PrimaryKeyRelatedField(many=False, queryset=models.TaskState.objects.all())
     due_date = serializers.DateTimeField(required=False)
     collection = serializers.PrimaryKeyRelatedField(many=False, queryset=models.JournalCollection.objects.all())
-    recurrence = serializers.DurationField()
+    recurrence = serializers.DurationField(required=False)
+    number_of_recurrences = serializers.IntegerField(required=False)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
     future_log = serializers.BooleanField(required=False)
@@ -17,10 +18,25 @@ class TaskSerializer(serializers.Serializer):
     def update(self, instance: models.Task, validated_data):
         instance.description = validated_data.get('description', instance.description)
         instance.due_date = validated_data.get('due_date', instance.due_date)
-        instance.recurrence = validated_data.get('recurrence', instance.recurrence)
         instance.future_log = validated_data.get('future_log', instance.future_log)
         instance.collection = validated_data.get('collection', instance.collection)
         instance.task_state = validated_data.get('task_state', instance.task_state)
+
+        # If the task is future logged, it cannot recur
+        if 'future_log' in validated_data:
+            if validated_data['future_log']:
+                instance.recurrence = None
+                instance.number_of_recurrences = None
+            else:
+                instance.recurrence = validated_data.get('recurrence', instance.recurrence)
+                instance.number_of_recurrences = validated_data.get('number_of_recurrences', instance.number_of_recurrences)
+        elif instance.future_log: 
+            instance.recurrence = None
+            instance.number_of_recurrences = None
+        else:
+            instance.recurrence = validated_data.get('recurrence', instance.recurrence)
+            instance.number_of_recurrences = validated_data.get('number_of_recurrences', instance.number_of_recurrences)
+        
         instance.save()
         return instance
 
