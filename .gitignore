@@ -134,3 +134,7 @@ dmypy.json
 
 # Test databases
 test.db
+
+# Coverage reports
+htmlcov/
+coverage.xml

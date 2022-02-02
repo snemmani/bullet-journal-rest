@@ -17,7 +17,7 @@ class Task(models.Model):
     description = models.CharField(max_length=250)
     task_state = models.ForeignKey("TaskState", related_name="task_state", on_delete=CASCADE)
     due_date = models.DateTimeField(null=True)
-    collection = models.ForeignKey("JournalCollection", related_name="task_page_rel", on_delete=CASCADE, null=True)
+    collection = models.ForeignKey("JournalCollection", related_name="task_page_rel", on_delete=CASCADE)
     recurrence = models.DurationField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
