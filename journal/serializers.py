@@ -6,9 +6,9 @@ class TaskSerializer(serializers.Serializer):
     """A task/to-do item in Bullet Journal"""
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField(max_length=250)
-    task_state = serializers.PrimaryKeyRelatedField(queryset=models.TaskState.objects.all())
+    task_state = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     due_date = serializers.DateTimeField(required=False)
-    collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), required=False)
+    collection = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     recurrence = serializers.DurationField()
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
@@ -53,7 +53,7 @@ class EventSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField(max_length=250)
     date = serializers.DateTimeField(required=False)
-    collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), required=False)
+    collection = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     recurrence = serializers.DurationField(required=False)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
@@ -79,7 +79,7 @@ class NoteSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField(max_length=250)
     date = serializers.DateTimeField(required=False)
-    collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), required=False)
+    collection = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
@@ -100,12 +100,12 @@ class NoteSerializer(serializers.Serializer):
 
 class JournalCollectionSerializer(serializers.Serializer):
     """A journal page is a collection in the bullet journal"""
-    id = serializers.IntegerField()
-    name = serializers.CharField(max_length=10)
-    calendar_day = serializers.DateField()  # If this is null, the page might be a collection
-    tasks = TaskSerializer(many=True)
-    events = EventSerializer(many=True)
-    notes = NoteSerializer(many=True)
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(max_length=100)
+    calendar_day = serializers.DateField(required=False)  # If this is null, the page might be a collection
+    tasks = TaskSerializer(required=False, many=True, read_only=True)
+    events = EventSerializer(required=False, many=True, read_only=True)
+    notes = NoteSerializer(required=False, many=True, read_only=True)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
