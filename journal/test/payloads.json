@@ -1,0 +1,13 @@
+{
+    "task": {
+        "test_post": {
+            "basic" : {
+                "description": "Learn to be a Jedi",
+                "task_state": 1,
+                "collection": 1,
+                "recurrence": "15 02:00:00",
+                "number_of_recurrences": 20
+            }
+        }
+    }
+}

@@ -6,13 +6,13 @@ class TaskSerializer(serializers.Serializer):
     """A task/to-do item in Bullet Journal"""
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField(max_length=250)
-    task_state = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    task_state = serializers.PrimaryKeyRelatedField(many=False, queryset=models.TaskState.objects.all())
     due_date = serializers.DateTimeField(required=False)
-    collection = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    collection = serializers.PrimaryKeyRelatedField(many=False, queryset=models.JournalCollection.objects.all())
     recurrence = serializers.DurationField()
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
-    future_log = serializers.BooleanField()
+    future_log = serializers.BooleanField(required=False)
 
     def update(self, instance: models.Task, validated_data):
         instance.description = validated_data.get('description', instance.description)

@@ -19,6 +19,7 @@ class Task(models.Model):
     due_date = models.DateTimeField(null=True)
     collection = models.ForeignKey("JournalCollection", related_name="task_page_rel", on_delete=CASCADE)
     recurrence = models.DurationField(null=True)
+    number_of_recurrences = models.IntegerField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     future_log = models.BooleanField(default=False)
