@@ -30,7 +30,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        coverage run --source="journal" manage.py test --settings bullet_journal.settings_unittest
+        coverage run --source="journal" --omit=journal/test/* manage.py test --settings bullet_journal.settings_unittest
         coverage xml
         
     - name: coverage.py badge
