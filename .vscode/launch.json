@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Coverage: Test",
+            "type": "python",
+            "request": "launch",
+            "module": "coverage",
+            "args":[
+                "run",
+                "--source=journal",
+                "--omit=journal/test/*",
+                "manage.py",
+                "test"
+            ],
+            "env": {
+                "DATABASE_URL": "postgres://test:test@test/test",
+                "DJANGO_SETTINGS_MODULE": "bullet_journal.settings_unittest"
+            }
+        },
+        {
+            "name": "Coverage: Report HTML",
+            "type": "python",
+            "request": "launch",
+            "module": "coverage",
+            "args":[
+                "html"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+          "name": "Test && Coverage",
+          "configurations": ["Coverage: Test", "Coverage: Report HTML"],
+        }
+      ]
+}
