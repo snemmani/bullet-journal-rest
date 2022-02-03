@@ -1,4 +1,4 @@
-# Bullet Journal RESTful services (bullet-journal-rest)
+# Bullet Journal (bullet-journal)
 [![Django CI](https://github.com/snemmani/bullet-journal-rest/actions/workflows/django.yml/badge.svg)](https://github.com/snemmani/bullet-journal-rest/actions/workflows/django.yml)
 [![Coverage](./coverage.svg)](./coverage.svg)
 [![CodeQL](https://github.com/snemmani/bullet-journal-rest/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/snemmani/bullet-journal-rest/actions/workflows/codeql-analysis.yml)
