@@ -34,16 +34,7 @@ jobs:
         cd backend
         coverage run --source="journal" --omit=journal/test/* manage.py test --settings bullet_journal.settings_unittest
         coverage xml
-        
-    - name: coverage.py badge
-      # You may pin to the exact commit or the version.
-      # uses: tj-actions/coverage-badge-py@786077b81572723a796adaf34015dfaeea425c3b
-      uses: tj-actions/coverage-badge-py@v1.6
-      with:
-        # Output path to write the badge.
-        output: backend/coverage.svg
-        overwrite: true
-
+        coverage-badge -o coverage.svg
     
     - name: Verify Changed files
       uses: tj-actions/verify-changed-files@v6
