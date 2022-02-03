@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from . import models
+import datetime
 
 
 class TaskSerializer(serializers.Serializer):
@@ -69,8 +70,9 @@ class EventSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField(max_length=250)
     date = serializers.DateTimeField(required=False)
-    collection = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), many=False)
     recurrence = serializers.DurationField(required=False)
+    number_of_recurrences = serializers.IntegerField(required=False)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
@@ -78,7 +80,21 @@ class EventSerializer(serializers.Serializer):
         instance.description = validated_data.get('description', instance.description)
         instance.date = validated_data.get('date', instance.date)
         instance.collection = validated_data.get('collection', instance.collection)
-        instance.recurrence = validated_data.get('recurrence', instance.recurrence)
+
+        if 'recurrence' in validated_data:
+            instance.recurrence = validated_data.get('recurrence', instance.recurrence)
+            if validated_data.get('recurrence') > datetime.timedelta(seconds=0):
+                instance.number_of_recurrences = validated_data.get('number_of_recurrences', instance.number_of_recurrences)
+            elif instance.recurrence:
+                instance.number_of_recurrences = validated_data.get('number_of_recurrences', instance.number_of_recurrences)
+            else:
+                instance.number_of_recurrences = 0
+        else:
+            if instance.recurrence:
+                instance.number_of_recurrences = validated_data.get('number_of_recurrences', instance.number_of_recurrences)
+            else:
+                instance.number_of_recurrences = 0
+                
         instance.save()
         return instance
 
@@ -94,14 +110,12 @@ class NoteSerializer(serializers.Serializer):
     """A Note in Bullet Journal"""
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField(max_length=250)
-    date = serializers.DateTimeField(required=False)
-    collection = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    collection = serializers.PrimaryKeyRelatedField(many=False, queryset=models.JournalCollection.objects.all())
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
     def update(self, instance, validated_data):
         instance.description = validated_data.get('description', instance.description)
-        instance.date = validated_data.get('date', instance.date)
         instance.collection = validated_data.get('collection', instance.collection)
         instance.save()
         return instance

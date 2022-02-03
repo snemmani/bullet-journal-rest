@@ -9,60 +9,12 @@ from django.utils import timezone
 from rest_framework import status
 
 from ..models import JournalCollection, Task, TaskState
-from ..serializers import JournalCollectionSerializer, TaskSerializer
+from ..serializers import TaskSerializer
 
 client = Client()
 
 with open(os.path.join(settings.BASE_DIR, 'journal', 'test', 'payloads.json'), 'r') as payloads_handle:
     payloads = json.load(payloads_handle)
-
-class TestJournalCollectionListView(TestCase):
-    """Tests module for JournalCollectionListView"""
-
-    def setUp(self):
-        JournalCollection.objects.create(name="New Collection")
-
-    def test_get(self):
-        collections = JournalCollection.objects.all()
-        serializer = JournalCollectionSerializer(collections, many=True)
-        response = client.get(reverse('collection_list'))
-        assert response.data == serializer.data
-        assert response.status_code == status.HTTP_200_OK
-    
-    def test_post(self):
-        response = client.post(reverse('collection_list'), data=dict(name="Test Collection", calendar_day="2022-01-29"))
-        collection = JournalCollection.objects.get(pk=2)
-        serializer = JournalCollectionSerializer(collection)
-        assert response.data == serializer.data
-        assert response.status_code == status.HTTP_201_CREATED
-
-class TestJournalCollectionDetailView(TestCase):
-    """Tests module for JournalCollectionDetailView"""
-    
-    def setUp(self):
-        JournalCollection.objects.create(name="New Collection")
-
-
-    def test_get_put_delete(self):
-        collection = JournalCollection.objects.get(pk=1)
-        serializer = JournalCollectionSerializer(collection)
-        response = client.get(reverse('collection_detail', args=[1]))
-        assert response.data == serializer.data
-        assert response.status_code == status.HTTP_200_OK
-
-        # Test put
-        response = client.put(reverse('collection_detail', args=[1]), content_type="application/json", data=dict(name="Another collection", calendar_day="2022-02-21"))
-        collection = JournalCollection.objects.get(pk=1)
-        assert collection.name == "Another collection"
-        assert collection.calendar_day == datetime.date(2022, 2, 21)
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['id'] == 1
-
-        # Test delete
-        response = client.delete(reverse('collection_detail', args=[1]))
-        assert len(JournalCollection.objects.all()) == 0
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-
 
 class TestTaskListView(TestCase):
     """Test module for TaskListView"""
@@ -82,7 +34,7 @@ class TestTaskListView(TestCase):
         assert response.status_code == status.HTTP_200_OK
     
     def test_post(self):
-        payload = payloads.get("task").get("test_post").get("basic")
+        payload = payloads.get("task_list").get("test_post_basic")
         response = client.post(reverse('task_list'), data=payload, content_type="application/json")
         data = Task.objects.get(pk=2)
         serializer = TaskSerializer(data)
@@ -107,15 +59,10 @@ class TestTaskDetailView(TestCase):
         assert response.status_code == status.HTTP_200_OK
 
         # Test put future log set to true
-        description = "Don't watch GOT"
-        future_log = True
+        payload = payloads.get("task_detail").get("test_put_regular")
         response = client.put(
             reverse('task_detail', args=[1]), 
-            data=dict(
-                description=description, 
-                future_log=future_log,
-                task_state=1,
-                collection=1,),
+            data=payload,
             content_type='application/json'
         )
 
@@ -126,16 +73,10 @@ class TestTaskDetailView(TestCase):
         assert response.status_code == status.HTTP_200_OK
 
         # Existing future log true
-        description = "Don't watch GOT"
-        future_log = True
+        payload = payloads.get("task_detail").get("test_existing_future_log")
         response = client.put(
             reverse('task_detail', args=[1]), 
-            data=dict(
-                description=description, 
-                recurrence="01:00:00",
-                task_state=1,
-                collection=1,
-                number_of_recurrences=1),
+            data=payload,
             content_type='application/json'
         )
 
@@ -145,17 +86,10 @@ class TestTaskDetailView(TestCase):
         assert response.status_code == status.HTTP_200_OK
 
         # Set future log to False and set recurrence
-        description = "Don't watch GOT"
-        future_log = True
+        payload = payloads.get("task_detail").get("test_future_log_false")
         response = client.put(
             reverse('task_detail', args=[1]), 
-            data=dict(
-                description=description, 
-                recurrence="01:00:00",
-                number_of_recurrences=1,
-                future_log=False,
-                task_state=1,
-                collection=1,),
+            data=payload,
             content_type='application/json'
         )
 
@@ -165,5 +99,9 @@ class TestTaskDetailView(TestCase):
         assert response.status_code == status.HTTP_200_OK
 
 
+        # Delete the task
+        response = client.delete(reverse('task_detail', args=[1]))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert len(Task.objects.all()) == 0
 
             

@@ -1,13 +1,78 @@
 {
-    "task": {
-        "test_post": {
-            "basic" : {
-                "description": "Learn to be a Jedi",
-                "task_state": 1,
-                "collection": 1,
-                "recurrence": "15 02:00:00",
-                "number_of_recurrences": 20
-            }
+    "task_list": {
+        "test_post_basic": {
+            "description": "Learn to be a Jedi",
+            "task_state": 1,
+            "collection": 1,
+            "recurrence": "15 02:00:00",
+            "number_of_recurrences": 20
+        }
+    },
+    "task_detail": {
+        "test_put_regular": {
+            "description": "Don't watch GOT", 
+            "future_log": true,
+            "task_state": 1,
+            "collection": 1
+        },
+
+        "test_existing_future_log": {
+            "description": "Don't watch GOT", 
+            "recurrence": "01:00:00",
+            "number_of_recurrences": 1,
+            "task_state": 1,
+            "collection": 1
+        },
+
+        "test_future_log_false": {
+            "description": "Don't watch GOT", 
+            "recurrence": "01:00:00",
+            "number_of_recurrences": 1,
+            "task_state": 1,
+            "collection": 1,
+            "future_log": false
+        }
+    },
+    "event_list": {
+        "test_post_basic": {
+            "description": "Startup meeting",
+            "recurrence": "01:00:00",
+            "number_of_recurrences": 1,
+            "collection": 1,
+            "date": "2022-01-31T21:00:00.382748"
+        }
+    },
+    "event_detail": {
+        "test_with_recurrence_false": {
+            "description": "Don't watch GOT", 
+            "recurrence": "00:00:00",
+            "number_of_recurrences": 1,
+            "collection": 1
+        },
+
+        "test_recurrence_true": {
+            "description": "Don't watch GOT", 
+            "recurrence": "01:00:00",
+            "number_of_recurrences": 1,
+            "collection": 1
+        },
+
+        "test_recurrence_already_true_and_no_of_recurrence_changed": {
+            "description": "Don't watch GOT", 
+            "number_of_recurrences": 3,
+            "collection": 1
+        }
+    },
+    "note_list": {
+        "test_post_basic": {
+            "description": "Learn to be a Jedi",
+            "collection": 1
+        }
+    },
+    "note_detail": {
+        "test_put": {
+            "description": "Don't watch GOT", 
+            "collection": 1
         }
     }
 }

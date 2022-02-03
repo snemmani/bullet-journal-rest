@@ -35,6 +35,7 @@ class Event(models.Model):
     date = models.DateTimeField(null=True)
     collection = models.ForeignKey("JournalCollection", related_name="event_page_rel", on_delete=CASCADE)
     recurrence = models.DurationField(null=True)
+    number_of_recurrences = models.IntegerField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -46,7 +47,6 @@ class Note(models.Model):
     """A Note in Bullet Journal"""
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=250)
-    date = models.DateTimeField(null=True)
     collection = models.ForeignKey("JournalCollection", related_name="note_page_rel", on_delete=CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
