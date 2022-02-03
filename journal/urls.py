@@ -28,6 +28,6 @@ urlpatterns = [
     path('task-state/<int:pk>', views.TaskStateDetailView.as_view(), name="task_state_detail"),
     path('collection', views.JournalCollectionListView.as_view(), name="collection_list"),
     path('collection/<int:pk>', views.JournalCollectionDetailView.as_view(), name="collection_detail"),
-    path('day', views.DayView.as_view(), name="day_view"),
-    path('month/<int:pk>', views.MonthView.as_view(), name="month_view"),
+    # path('day', views.DayView.as_view(), name="day_view"),
+    # path('month/<int:pk>', views.MonthView.as_view(), name="month_view"),
 ]
