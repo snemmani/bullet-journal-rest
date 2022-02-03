@@ -34,6 +34,7 @@ jobs:
         cd backend
         coverage run --source="journal" --omit=journal/test/* manage.py test --settings bullet_journal.settings_unittest
         coverage xml
+        rm -f coverage.svg
         coverage-badge -o coverage.svg
     
     - name: Verify Changed files
