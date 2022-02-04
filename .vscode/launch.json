@@ -19,7 +19,8 @@
             "env": {
                 "DATABASE_URL": "postgres://test:test@test/test",
                 "DJANGO_SETTINGS_MODULE": "bullet_journal.settings_unittest"
-            }
+            },
+            "cwd": "${workspaceFolder}"
         },
         {
             "name": "Coverage: Report HTML",
@@ -28,8 +29,10 @@
             "module": "coverage",
             "args":[
                 "html"
-            ]
-        }
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+
     ],
     "compounds": [
         {

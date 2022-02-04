@@ -26,12 +26,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
-        cd backend
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        cd backend
         coverage run --source="journal" --omit=journal/test/* manage.py test --settings bullet_journal.settings_unittest
         coverage xml
         rm -f coverage.svg
@@ -41,7 +39,7 @@ jobs:
       uses: tj-actions/verify-changed-files@v6
       id: changed_files
       with:
-        files: backend/coverage.svg
+        files: coverage.svg
 
     
     - name: Commit files
@@ -49,7 +47,7 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add backend/coverage.svg
+        git add coverage.svg
         git commit -m "Updated coverage.svg"
 
     - name: Push changes
