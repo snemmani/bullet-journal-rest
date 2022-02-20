@@ -1,11 +1,13 @@
 from django.db import models
 from django.db.models import CASCADE
+from django.contrib.auth.models import User
 
 
 class TaskState(models.Model):
     """Task States like Active/Moved/Future Logged/Canceled/Completed"""
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+    # created = models.ForeignKey()
 
     def __str__(self):
         return self.name

@@ -8,5 +8,6 @@ from .api_views import TaskStateListView
 from .api_views import TaskStateDetailView
 from .api_views import JournalCollectionDetailView
 from .api_views import JournalCollectionListView
+from .auth0_views import index
 # from .custom_views import DayView
 # from .custom_views import MonthView

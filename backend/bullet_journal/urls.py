@@ -16,10 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic.base import TemplateView
+from journal.views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/journal/', include('journal.urls')),
     path('reference/', include('swagger.urls')),
-    re_path(r'^.*', TemplateView.as_view(template_name="home.html"), name="home"),
+    # re_path(r'^bujo/.*', TemplateView.as_view(template_name="index.html"), name="index"),
+    re_path(r'^bujo/.*', index, name="index"),
+    path('', include('django.contrib.auth.urls')),
+    path('', include('social_django.urls')),
 ]
