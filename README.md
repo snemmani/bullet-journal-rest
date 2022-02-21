@@ -1,6 +1,6 @@
 # Bullet Journal (bullet-journal)
 [![Django CI](https://github.com/snemmani/bullet-journal-rest/actions/workflows/django.yml/badge.svg)](https://github.com/snemmani/bullet-journal-rest/actions/workflows/django.yml)
-[![Coverage](./coverage.svg)](./coverage.svg)
+[![Coverage](./backend/coverage.svg)](./backend/coverage.svg)
 [![CodeQL](https://github.com/snemmani/bullet-journal-rest/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/snemmani/bullet-journal-rest/actions/workflows/codeql-analysis.yml)
 
 This is the Rest Services Application for Bullet Journal Application
