@@ -22,6 +22,7 @@ class Task(models.Model):
     collection = models.ForeignKey("JournalCollection", related_name="task_page_rel", on_delete=CASCADE)
     recurrence = models.DurationField(null=True)
     number_of_recurrences = models.IntegerField(null=True)
+    user = models.ForeignKey(User, related_name="task_user_rel", on_delete=CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     future_log = models.BooleanField(default=False)
@@ -38,6 +39,7 @@ class Event(models.Model):
     collection = models.ForeignKey("JournalCollection", related_name="event_page_rel", on_delete=CASCADE)
     recurrence = models.DurationField(null=True)
     number_of_recurrences = models.IntegerField(null=True)
+    user = models.ForeignKey(User, related_name="event_user_rel", on_delete=CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -50,6 +52,7 @@ class Note(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=250)
     collection = models.ForeignKey("JournalCollection", related_name="note_page_rel", on_delete=CASCADE)
+    user = models.ForeignKey(User, related_name="note_user_rel", on_delete=CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -62,6 +65,7 @@ class JournalCollection(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=10)
     calendar_day = models.DateField(null=True) # If this is null, the page might be a collection
+    user = models.ForeignKey(User, related_name="collection_user_rel", on_delete=CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

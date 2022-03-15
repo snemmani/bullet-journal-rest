@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from journal import models
 from journal import serializers
+from rest_framework.permissions import IsAuthenticated
 
 
 # Create your views here.
@@ -11,6 +12,7 @@ class TaskListView(ListCreateAPIView):
     """
     queryset = models.Task.objects.all()
     serializer_class = serializers.TaskSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class TaskDetailView(RetrieveUpdateDestroyAPIView):
@@ -19,6 +21,7 @@ class TaskDetailView(RetrieveUpdateDestroyAPIView):
     """
     queryset = models.Task.objects.all()
     serializer_class = serializers.TaskSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class TaskStateListView(ListCreateAPIView):
@@ -27,6 +30,7 @@ class TaskStateListView(ListCreateAPIView):
     """
     queryset = models.TaskState.objects.all()
     serializer_class = serializers.TaskStateSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class TaskStateDetailView(RetrieveUpdateDestroyAPIView):
@@ -35,6 +39,7 @@ class TaskStateDetailView(RetrieveUpdateDestroyAPIView):
     """
     queryset = models.TaskState.objects.all()
     serializer_class = serializers.TaskStateSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class EventListView(ListCreateAPIView):
@@ -43,6 +48,7 @@ class EventListView(ListCreateAPIView):
     """
     queryset = models.Event.objects.all()
     serializer_class = serializers.EventSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class EventDetailView(RetrieveUpdateDestroyAPIView):
@@ -51,6 +57,7 @@ class EventDetailView(RetrieveUpdateDestroyAPIView):
     """
     queryset = models.Event.objects.all()
     serializer_class = serializers.EventSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class NoteListView(ListCreateAPIView):
@@ -59,6 +66,7 @@ class NoteListView(ListCreateAPIView):
     """
     queryset = models.Note.objects.all()
     serializer_class = serializers.NoteSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class NoteDetailView(RetrieveUpdateDestroyAPIView):
@@ -67,6 +75,7 @@ class NoteDetailView(RetrieveUpdateDestroyAPIView):
     """
     queryset = models.Note.objects.all()
     serializer_class = serializers.NoteSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class JournalCollectionListView(ListCreateAPIView):
@@ -75,6 +84,7 @@ class JournalCollectionListView(ListCreateAPIView):
     """
     queryset = models.JournalCollection.objects.all()
     serializer_class = serializers.JournalCollectionSerializer
+    permission_classes =  (IsAuthenticated,)
 
 
 class JournalCollectionDetailView(RetrieveUpdateDestroyAPIView):
@@ -83,3 +93,4 @@ class JournalCollectionDetailView(RetrieveUpdateDestroyAPIView):
     """
     queryset = models.JournalCollection.objects.all()
     serializer_class = serializers.JournalCollectionSerializer
+    permission_classes =  (IsAuthenticated,)

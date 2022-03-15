@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
 ]
 
 ROOT_URLCONF = 'bullet_journal.urls'
@@ -114,7 +115,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -123,8 +123,8 @@ STATIC_URL = '/static/'
 # Auth0 Settings
 SOCIAL_AUTH_TRAILING_SLASH = False  # Remove trailing slash from routes
 SOCIAL_AUTH_AUTH0_DOMAIN = 'shrill-resonance-8638.us.auth0.com'
-SOCIAL_AUTH_AUTH0_KEY = ''
-SOCIAL_AUTH_AUTH0_SECRET = ''
+SOCIAL_AUTH_AUTH0_KEY = os.environ['AUTH0_CLIENT_ID']
+SOCIAL_AUTH_AUTH0_SECRET = os.environ['AUTH0_CLIENT_SECRET']
 
 SOCIAL_AUTH_AUTH0_SCOPE = [
     'openid',
@@ -134,8 +134,31 @@ SOCIAL_AUTH_AUTH0_SCOPE = [
 
 AUTHENTICATION_BACKENDS = {
     'journal.auth0backend.Auth0',
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.RemoteUserBackend',
 }
 
 LOGIN_URL = '/login/auth0'
 LOGIN_REDIRECT_URL = '/bujo/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER':
+        'journal.utils.jwt_get_username_from_payload_handler',
+    'JWT_DECODE_HANDLER':
+        'journal.utils.jwt_decode_token',
+    'JWT_ALGORITHM': 'RS256',
+    'JWT_AUDIENCE': SOCIAL_AUTH_AUTH0_KEY,
+    'JWT_ISSUER': f'https://{SOCIAL_AUTH_AUTH0_DOMAIN}/',
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}
