@@ -8,6 +8,8 @@ on:
 
 env:
   DATABASE_URL: postgres://abc:test@test:5432/test
+  AUTH0_CLIENT_ID: client_id
+  AUTH0_CLIENT_SECRET: client_secret
 
 jobs:
   build:
