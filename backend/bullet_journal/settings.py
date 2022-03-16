@@ -162,3 +162,8 @@ JWT_AUTH = {
     'JWT_ISSUER': f'https://{SOCIAL_AUTH_AUTH0_DOMAIN}/',
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    '/var/www/static/',
+]
