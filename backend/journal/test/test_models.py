@@ -2,6 +2,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 from ..models import TaskState, Task, Event, Note, JournalCollection
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class TaskStateTest(TestCase):
     """Test module for TastState"""
@@ -22,9 +23,10 @@ class TaskTest(TestCase):
     """Test module for Task"""
 
     def setUp(self):
-        collection = JournalCollection.objects.create(name="Today")
+        user = User.objects.create(first_name="A", last_name="B", email="123@abc.com")
+        collection = JournalCollection.objects.create(name="Today", user=user)
         state = TaskState.objects.create(name="Active")
-        Task.objects.create(description="Test task", task_state=state, collection=collection)
+        Task.objects.create(description="Test task", task_state=state, collection=collection, user=user)
 
     def test_object_creation_updation(self):
         assert len(Task.objects.all()) == 1
@@ -49,8 +51,9 @@ class EventTest(TestCase):
     """Test module for Event"""
 
     def setUp(self):
-        collection = JournalCollection.objects.create(name="Test")
-        Event.objects.create(description="Simple event", date=timezone.now(), collection=collection)
+        user = User.objects.create(first_name="A", last_name="B", email="123@abc.com")
+        collection = JournalCollection.objects.create(name="Test", user=user)
+        Event.objects.create(description="Simple event", date=timezone.now(), collection=collection, user=user)
 
     def test_object_creation(self):
         assert len(Event.objects.all()) == 1
@@ -61,8 +64,9 @@ class NoteTest(TestCase):
     """Test module for Note"""
 
     def setUp(self):
-        collection = JournalCollection.objects.create(name="Test")
-        Note.objects.create(description="Note", collection=collection)
+        user = User.objects.create(first_name="A", last_name="B", email="123@abc.com")
+        collection = JournalCollection.objects.create(name="Test", user=user)
+        Note.objects.create(description="Note", collection=collection, user=user)
 
     def test_object_creation(self):
         assert len(Note.objects.all()) == 1
@@ -73,7 +77,8 @@ class JournalCollectionTest(TestCase):
     """Test module for JournalCollection"""
 
     def setUp(self):
-        JournalCollection.objects.create(name="Test")
+        user = User.objects.create(first_name="A", last_name="B", email="123@abc.com")
+        JournalCollection.objects.create(name="Test", user=user)
 
     def test_object_creation(self):
         assert len(JournalCollection.objects.all()) == 1

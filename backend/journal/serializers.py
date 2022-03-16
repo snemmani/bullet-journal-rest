@@ -12,7 +12,7 @@ class TaskSerializer(serializers.Serializer):
     collection = serializers.PrimaryKeyRelatedField(many=False, queryset=models.JournalCollection.objects.all())
     recurrence = serializers.DurationField(required=False)
     number_of_recurrences = serializers.IntegerField(required=False)
-    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all(), required=False)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
     future_log = serializers.BooleanField(required=False)
@@ -44,7 +44,7 @@ class TaskSerializer(serializers.Serializer):
         return instance
 
     def create(self, validated_data):
-        return models.Task.objects.create(self.context['request'].user, **validated_data)
+        return models.Task.objects.create(user=self.context['request'].user, **validated_data)
 
     class Meta:
         model = models.Task
@@ -74,7 +74,7 @@ class EventSerializer(serializers.Serializer):
     date = serializers.DateTimeField(required=False)
     collection = serializers.PrimaryKeyRelatedField(queryset=models.JournalCollection.objects.all(), many=False)
     recurrence = serializers.DurationField(required=False)
-    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all(), required=False)
     number_of_recurrences = serializers.IntegerField(required=False)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
@@ -103,7 +103,7 @@ class EventSerializer(serializers.Serializer):
         return instance
 
     def create(self, validated_data):
-        return models.Event.objects.create(**validated_data)
+        return models.Event.objects.create(user=self.context['request'].user, **validated_data)
 
     class Meta:
         model = models.Event
@@ -116,7 +116,7 @@ class NoteSerializer(serializers.Serializer):
     description = serializers.CharField(max_length=250)
     collection = serializers.PrimaryKeyRelatedField(many=False, queryset=models.JournalCollection.objects.all())
     created = serializers.DateTimeField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all(), required=False)
     updated = serializers.DateTimeField(read_only=True)
 
     def update(self, instance, validated_data):
@@ -127,7 +127,7 @@ class NoteSerializer(serializers.Serializer):
         return instance
 
     def create(self, validated_data):
-        return models.Note.objects.create(**validated_data)
+        return models.Note.objects.create(user=self.context['request'].user, **validated_data)
 
     class Meta:
         model = models.Note
@@ -142,7 +142,7 @@ class JournalCollectionSerializer(serializers.Serializer):
     tasks = TaskSerializer(required=False, many=True, read_only=True)
     events = EventSerializer(required=False, many=True, read_only=True)
     notes = NoteSerializer(required=False, many=True, read_only=True)
-    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(many=False, queryset=models.User.objects.all(), required=False)
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
@@ -151,12 +151,12 @@ class JournalCollectionSerializer(serializers.Serializer):
         instance.calendar_day = validated_data.get("calendar_day", instance.calendar_day)
         instance.created = validated_data.get("created", instance.created)
         instance.updated = validated_data.get("updated", instance.updated)
-        instance.user = validated_data.get("user", instance.user)
+        instance.user = self.context['request'].user
         instance.save()
         return instance
 
     def create(self, validated_data):
-        return models.JournalCollection.objects.create(**validated_data)
+        return models.JournalCollection.objects.create(user=self.context['request'].user, **validated_data)
 
     class Meta:
         model = models.TaskState

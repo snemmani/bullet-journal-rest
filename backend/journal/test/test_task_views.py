@@ -7,11 +7,15 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
+from django.contrib.auth.models import User
 
 from ..models import JournalCollection, Task, TaskState
 from ..serializers import TaskSerializer
 
 client = Client()
+user = User(first_name="A", last_name="B", email="123@abc.com", username="123")
+user_password = "123"
+user.set_password(user_password)
 
 with open(os.path.join(settings.BASE_DIR, 'journal', 'test', 'payloads.json'), 'r') as payloads_handle:
     payloads = json.load(payloads_handle)
@@ -20,10 +24,19 @@ class TestTaskListView(TestCase):
     """Test module for TaskListView"""
     
     def setUp(self):
+        user.save()
+        client.login(username=user.username, password=user_password)
         taskState = TaskState.objects.create(name="Active")
-        collection = JournalCollection.objects.create(name="Collection 1")
+        collection = JournalCollection.objects.create(name="Collection 1", user=user)
         duration = datetime.timedelta(days=1, hours=2)
-        Task.objects.create(description="Defeat Sith lords", task_state=taskState, due_date=timezone.now(), collection=collection, recurrence=duration)
+        Task.objects.create(
+            description="Defeat Sith lords", 
+            task_state=taskState, 
+            due_date=timezone.now(), 
+            collection=collection, 
+            recurrence=duration,
+            user=user
+        )
         
 
     def test_get(self):
@@ -45,10 +58,19 @@ class TestTaskDetailView(TestCase):
     """Tests module to test TaskDetailView"""
 
     def setUp(self):
+        user.save()
+        client.login(username=user.username, password=user_password)
         taskState = TaskState.objects.create(name="Active")
-        collection = JournalCollection.objects.create(name="Collection 1")
+        collection = JournalCollection.objects.create(name="Collection 1", user=user)
         duration = datetime.timedelta(days=1, hours=2)
-        Task.objects.create(description="Watch Big Bang Theory", task_state=taskState, due_date=timezone.now(), collection=collection, recurrence=duration)
+        Task.objects.create(
+            description="Watch Big Bang Theory", 
+            task_state=taskState, 
+            due_date=timezone.now(), 
+            collection=collection, 
+            recurrence=duration,
+            user=user
+        )
 
     def test_get_put_delete(self):
         # Test get

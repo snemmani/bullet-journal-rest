@@ -7,11 +7,15 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
+from django.contrib.auth.models import User
 
 from ..models import JournalCollection
 from ..serializers import JournalCollectionSerializer
 
 client = Client()
+user = User(first_name="A", last_name="B", email="123@abc.com")
+user_password = "123"
+user.set_password(user_password)
 
 with open(os.path.join(settings.BASE_DIR, 'journal', 'test', 'payloads.json'), 'r') as payloads_handle:
     payloads = json.load(payloads_handle)
@@ -20,7 +24,9 @@ class TestJournalCollectionListView(TestCase):
     """Tests module for JournalCollectionListView"""
 
     def setUp(self):
-        JournalCollection.objects.create(name="New Collection")
+        user.save()
+        client.login(username=user.username, password=user_password)
+        JournalCollection.objects.create(name="New Collection", user=user)
 
     def test_get(self):
         collections = JournalCollection.objects.all()
@@ -40,7 +46,9 @@ class TestJournalCollectionDetailView(TestCase):
     """Tests module for JournalCollectionDetailView"""
     
     def setUp(self):
-        JournalCollection.objects.create(name="New Collection")
+        user.save()
+        client.login(username=user.username, password=user_password)
+        JournalCollection.objects.create(name="New Collection", user=user)
 
 
     def test_get_put_delete(self):

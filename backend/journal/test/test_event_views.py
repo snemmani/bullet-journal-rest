@@ -7,11 +7,15 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
+from django.contrib.auth.models import User
 
 from ..models import JournalCollection, Event
 from ..serializers import EventSerializer
 
 client = Client()
+user = User(first_name="A", last_name="B", email="123@abc.com", username="123")
+user_password = "123"
+user.set_password(user_password)
 
 with open(os.path.join(settings.BASE_DIR, 'journal', 'test', 'payloads.json'), 'r') as payloads_handle:
     payloads = json.load(payloads_handle)
@@ -20,9 +24,17 @@ class TestEventListView(TestCase):
     """Test module for EventListView"""
     
     def setUp(self):
-        collection = JournalCollection.objects.create(name="Collection 1")
+        user.save()
+        client.login(username=user.username, password=user_password)
+        collection = JournalCollection.objects.create(name="Collection 1", user=user)
         duration = datetime.timedelta(days=1, hours=2)
-        Event.objects.create(description="Meet Sheldon Cooper about the empty apartment", collection=collection, recurrence=duration, number_of_recurrences=2)
+        Event.objects.create(
+            description="Meet Sheldon Cooper about the empty apartment", 
+            collection=collection, 
+            recurrence=duration, 
+            number_of_recurrences=2,
+            user=user
+        )
         
 
     def test_get(self):
@@ -44,12 +56,20 @@ class TestEventDetailView(TestCase):
     """Tests module to test EventDetailView"""
 
     def setUp(self):
-        collection = JournalCollection.objects.create(name="Collection 1")
+        user.save()
+        collection = JournalCollection.objects.create(name="Collection 1", user=user)
         duration = datetime.timedelta(days=1, hours=2)
-        Event.objects.create(description="Watch Big Bang Theory", date=timezone.now(), collection=collection, recurrence=duration)
+        Event.objects.create(
+            description="Watch Big Bang Theory", 
+            date=timezone.now(), 
+            collection=collection, 
+            recurrence=duration,
+            user=user
+        )
 
     def test_get_put_delete(self):
         # Test get
+        client.login(username=user.username, password=user_password)
         response = client.get(reverse('event_detail', args=[1]))
         data = Event.objects.get(pk=1)
         serializer = EventSerializer(data)
